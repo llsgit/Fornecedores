@@ -1,0 +1,47 @@
+{
+  "name": "fornecedores",
+  "version": "1.0.2",
+  "description": "Manutenção de Ordens de Serviço",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap/cds": "^4",
+    "@sap/cds-odata-v2-adapter-proxy": "^1.6.1",
+    "@sap/hana-client": "^2.7",
+    "@sap/xsenv": "^3.1.0",
+    "@sap/xssec": "^3.1.2",
+    "passport": "^0.4.1",
+    "express": "^4",
+    "client-oauth2": "^4.3.3"
+  },
+  "devDependencies": {
+    "@sap/ux-specification": "^1.84.10",
+    "sqlite3": "5.0.0"
+  },
+  "scripts": {
+    "start": "cds run"
+  },
+  "sapux": [
+    "app/relatorio",
+    "app/materiais",
+    "app/filtropesquisa",
+    "app/centro",
+    "app/notafiscal",
+    "app/defeito",
+    "app/usuarios"
+  ],
+  "cds": {
+    "hana": {
+      "deploy-format": "hdbtable"
+    },
+    "requires": {
+      "db": {
+        "kind": "sql"
+      },
+      "uaa": {
+        "kind": "xsuaa"
+      }
+    }
+  }
+}

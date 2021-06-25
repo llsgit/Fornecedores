@@ -1,0 +1,34 @@
+{
+  "xsappname": "fornecedores",
+  "tenant-mode": "dedicated",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.Admin",
+      "description": "Admin"
+    },
+    {
+      "name": "$XSAPPNAME.Reparador",
+      "description": "Reparador"
+    }
+  ],
+  "attributes": [],
+  "role-templates": [
+    {
+      "name": "Admin",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.Admin"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "Reparador",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.Reparador"
+      ],
+      "attribute-references": []
+    }
+  ]
+}
+

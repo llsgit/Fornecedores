@@ -1,0 +1,14 @@
+# Generated manifest.yml based on template version 0.1.0
+# appName = Fornecedores
+# language=nodejs
+# multiTenant=false
+---
+applications:
+# -----------------------------------------------------------------------------------
+# Backend Service
+# -----------------------------------------------------------------------------------
+- name: fornecedores-srv
+  random-route: true  # for development only
+  path: gen/srv
+  memory: 256M
+  buildpack: nodejs_buildpack

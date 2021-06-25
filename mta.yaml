@@ -1,0 +1,212 @@
+_schema-version: "3.1"
+ID: Fornecedores
+description: Manutenção de Ordens de Serviço
+version: 1.0.2
+modules:
+- name: fornecedores-srv
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: fornecedores-db
+  - name: uaa_fornecedores
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+- name: fornecedores-db-deployer
+  type: hdb
+  path: gen/db
+  requires:
+  - name: fornecedores-db
+  - name: uaa_fornecedores
+  parameters:
+    buildpack: nodejs_buildpack
+- name: fornecedores-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: uaa_fornecedores
+    parameters:
+      service-key:
+        name: uaa_fornecedores-key
+  - name: fornecedores_html_repo_host
+    parameters:
+      service-key:
+        name: fornecedores_html_repo_host-key
+  - name: fornecedores-destination-service
+    parameters:
+      content-target: true  
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: claro_manutencao_fornecedores_html_repo_host
+          ServiceInstanceName: fornecedores-html5-app-host-service
+          ServiceKeyName: fornecedores_html_repo_host-key
+          sap.cloud.service: claro.manutencao
+        - Authentication: OAuth2UserTokenExchange
+          Name: claro_manutencao_uaa_fornecedores
+          ServiceInstanceName: fornecedores-xsuaa-service
+          ServiceKeyName: uaa_fornecedores-key
+          sap.cloud.service: claro.manutencao
+        existing_destinations_policy: update
+  build-parameters:
+    no-source: true
+- name: fornecedores-ui_deployer
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: fornecedores_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - claroportalreparosnotafiscal.zip
+      name: claroportalreparosnotafiscal
+      target-path: resources/
+    - artifacts:
+      - claroportalreparosrelatorio.zip
+      name: claroportalreparosrelatorio
+      target-path: resources/
+    - artifacts:
+      - claroportalreparosmateriais.zip
+      name: claroportalreparosmateriais
+      target-path: resources/
+    - artifacts:
+      - claroportalreparosfiltropesquisa.zip
+      name: claroportalreparosfiltropesquisa
+      target-path: resources/
+    - artifacts:
+      - claroportalreparoscentro.zip
+      name: claroportalreparoscentro
+      target-path: resources/      
+    - artifacts:
+      - claroportalreparosdefeito.zip
+      name: claroportalreparosdefeito
+      target-path: resources/      
+    - artifacts:
+      - claroportalreparosusuarios.zip
+      name: claroportalreparosusuarios
+      target-path: resources/                
+- name: claroportalreparosnotafiscal
+  type: html5
+  path: app/notafiscal
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: claroportalreparosrelatorio
+  type: html5
+  path: app/relatorio
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: claroportalreparosmateriais
+  type: html5
+  path: app/materiais
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: claroportalreparosfiltropesquisa
+  type: html5
+  path: app/filtropesquisa
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: claroportalreparoscentro
+  type: html5
+  path: app/centro
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []    
+- name: claroportalreparosdefeito
+  type: html5
+  path: app/defeito
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []        
+- name: claroportalreparosusuarios
+  type: html5
+  path: app/usuarios
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []       
+resources:
+- name: fornecedores-destination-service
+  type: org.cloudfoundry.managed-service
+  requires:
+    - name: srv-api  
+  parameters:
+    service: destination
+    service-name: fornecedores-destination-service
+    service-plan: lite
+    config:
+      init_data:
+        subaccount:
+          existing_destinations_policy: update
+          destinations:
+            - Name: fornecedores-launchpad
+              Description: Fornecedores service
+              Authentication: NoAuthentication
+              ProxyType: Internet
+              Type: HTTP
+              URL: ~{srv-api/srv-url}
+              HTML5.DynamicDestination: true
+              HTML5.ForwardAuthToken: true      
+- name: fornecedores_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: fornecedores-html5-app-host-service
+    service-plan: app-host
+- name: uaa_fornecedores
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: fornecedores-xsuaa-service
+    service-plan: application
+- name: fornecedores-db
+  type: com.sap.xs.hdi-container
+  parameters:
+    service: hana
+    service-plan: hdi-shared
+  properties:
+    hdi-service-name: ${service-name}
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm install --production
+    - npx -p @sap/cds-dk cds build --production
