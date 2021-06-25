@@ -248,8 +248,8 @@ module.exports = cds.service.impl(function () {
         let url = 'https://claro-prd.it-cpi008-rt.cfapps.br10.hana.ondemand.com/http/notasfiscais';
         var ordemServico = [];
 
-        const data = 'grant_type=client_credentials&client_id=sb-841ee75f-f9c3-4b73-a6e7-e4366ffdb56e!b396|it-rt-claro-prd!b106&'+
-            'client_secret=63dd7b91-cd1e-404d-8336-b4cc7fb50c79$RkOLj3GOxNSgl7xtRVgFHV2OcBo80tutDiLsHhCFYe8=';
+        const data = 'grant_type=client_credentials&client_id=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX&'+
+            'client_secret=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
             
         var user_token = '';
         var token_url = 'https://claro-prd.authentication.br10.hana.ondemand.com/oauth/token';
